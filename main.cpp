@@ -6,7 +6,7 @@
 #include <vector>
 
 
-const int NUM_SIMS = 10;
+const int NUM_SIMS = 150;
 
 
 bool contains(std::vector<int>* v, const int n) {
@@ -170,21 +170,40 @@ int cscan(std::vector<int>* vec) {
 int main () {
     std::vector<int>* rands_v = new std::vector<int>();
     std::srand((unsigned)time(NULL));
-    long fcfs_seeks, sstf_seeks, scan_seeks, cscan_seeks;
-    fcfs_seeks = sstf_seeks = scan_seeks = cscan_seeks = 0;
+    std::vector<int> fcfs_totals(51);
+    std::vector<int> sstf_totals(51);
+    std::vector<int> scan_totals(51);
+    std::vector<int> cscan_totals(51);
 
     for(int i = 0; i < NUM_SIMS; i++) {
-        for(int j = 25; j < 26; j++) {
+        for(int j = 25; j < 76; j++) {
             rands_v->clear();
             get_rands(rands_v, j);
             
-            for(int k = 0; k < rands_v->size(); k++)
-                std::cout << rands_v->at(k) << "\t";
-            std::cout << std::endl;
+            // for(int k = 0; k < rands_v->size(); k++)
+            //     std::cout << rands_v->at(k) << "\t";
 
-            std::cout << "fcfs: " << fcfs(rands_v) << "\nsstf: " << sstf(rands_v) <<
-                "\nscan: " << scan(rands_v) << "\ncscan: " << cscan(rands_v) << std::endl;
+            fcfs_totals[j-25] += fcfs(rands_v);
+            sstf_totals[j-25] += sstf(rands_v);
+            scan_totals[j-25] += scan(rands_v);
+            cscan_totals[j-25] += cscan(rands_v);
+
         }
+    }
 
+    float fcfs_avg, sstf_avg, scan_avg, cscan_avg;
+
+    std::cout << "fcfs\tsstf\tscan\tcscan" << std::endl;
+
+    for(int i = 0; i < 51; i++) {
+        std::cout << std::endl;
+        fcfs_avg = fcfs_totals[i] / float(((i + 25) * NUM_SIMS));
+        sstf_avg = sstf_totals[i] / float(((i + 25) * NUM_SIMS));
+        scan_avg = scan_totals[i] / float(((i + 25) * NUM_SIMS));
+        cscan_avg = cscan_totals[i] / float(((i + 25) * NUM_SIMS));
+        std::cout << fcfs_avg << "\t"
+                  << sstf_avg << "\t"
+                  << scan_avg << "\t"
+                  << cscan_avg << std::endl;
     }
 }
